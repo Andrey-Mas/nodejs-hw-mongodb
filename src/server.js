@@ -42,3 +42,20 @@ export function setupServer() {
 
   return app;
 }
+// 404 для неіснуючих маршрутів
+app.use((req, res) => {
+  res.status(404).json({ message: "Not found" });
+});
+
+// Глобальний обробник помилок
+app.use((err, req, res, next) => {
+  // Лог у pino, якщо є
+  req.log?.error(err);
+
+  // Якщо це CastError (невірний ObjectId) — віддаємо як “не знайдено”
+  if (err?.name === "CastError") {
+    return res.status(404).json({ message: "Contact not found" });
+  }
+
+  return res.status(500).json({ message: "Internal Server Error" });
+});

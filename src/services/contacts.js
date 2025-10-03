@@ -1,11 +1,14 @@
+import mongoose from "mongoose";
 import { Contact } from "../models/contact.js";
 
 export async function getAllContactsService() {
-  const contacts = await Contact.find({});
-  return contacts;
+  return Contact.find({});
 }
 
 export async function getContactByIdService(contactId) {
-  const contact = await Contact.findById(contactId);
-  return contact; // може бути null — це ок, обробимо в контролері
+  // якщо id не валідний — одразу “нема”
+  if (!mongoose.isValidObjectId(contactId)) {
+    return null;
+  }
+  return Contact.findById(contactId);
 }
