@@ -18,14 +18,9 @@ export function setupServer() {
   const logger = pino({
     level: process.env.NODE_ENV === "production" ? "info" : "debug",
   });
-  app.use(
-    pinoHttp({
-      logger,
-      autoLogging: true,
-    })
-  );
+  app.use(pinoHttp({ logger, autoLogging: true }));
 
-  // РОУТИ
+  // роутинг
   app.get("/contacts", getContactsController);
   app.get("/contacts/:contactId", getContactByIdController);
 
@@ -34,7 +29,16 @@ export function setupServer() {
     res.status(404).json({ message: "Not found" });
   });
 
-  // запуск сервера
+  // глобальний обробник помилок (НА САМОМУ КІНЦІ)
+  app.use((err, req, res, next) => {
+    req.log?.error(err);
+    // невалідний ObjectId → як "не знайдено"
+    if (err?.name === "CastError") {
+      return res.status(404).json({ message: "Contact not found" });
+    }
+    return res.status(500).json({ message: "Internal Server Error" });
+  });
+
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     logger.info(`Server is running on port ${PORT}`);
@@ -42,20 +46,3 @@ export function setupServer() {
 
   return app;
 }
-// 404 для неіснуючих маршрутів
-app.use((req, res) => {
-  res.status(404).json({ message: "Not found" });
-});
-
-// Глобальний обробник помилок
-app.use((err, req, res, next) => {
-  // Лог у pino, якщо є
-  req.log?.error(err);
-
-  // Якщо це CastError (невірний ObjectId) — віддаємо як “не знайдено”
-  if (err?.name === "CastError") {
-    return res.status(404).json({ message: "Contact not found" });
-  }
-
-  return res.status(500).json({ message: "Internal Server Error" });
-});

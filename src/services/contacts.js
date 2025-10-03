@@ -6,7 +6,7 @@ export async function getAllContactsService() {
 }
 
 export async function getContactByIdService(contactId) {
-  // якщо id не валідний — одразу “нема”
+  // якщо id не валідний — повертаємо null, щоб контролер віддав 404
   if (!mongoose.isValidObjectId(contactId)) {
     return null;
   }
