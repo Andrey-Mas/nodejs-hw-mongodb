@@ -1,31 +1,12 @@
 import mongoose from "mongoose";
 
 export async function initMongoConnection() {
-  const {
-    MONGODB_URI,
-    MONGODB_DB,
-    MONGODB_USER,
-    MONGODB_PASSWORD,
-    MONGODB_URL,
-  } = process.env;
+  const uri = (process.env.MONGODB_URI || "").trim();
+  if (!uri) throw new Error("MONGODB_URI is not set");
 
-  let uri;
-  let options = {};
+  // Тимчасові діагностичні логи (без пароля)
+  console.log("URI prefix:", uri.slice(0, 14)); // очікуємо "mongodb+srv://"
 
-  if (MONGODB_URI) {
-    uri = MONGODB_URI;
-    if (MONGODB_DB) options.dbName = MONGODB_DB;
-  } else {
-    if (!MONGODB_USER || !MONGODB_PASSWORD || !MONGODB_URL || !MONGODB_DB) {
-      throw new Error(
-        "Set MONGODB_URI or all of MONGODB_USER, MONGODB_PASSWORD, MONGODB_URL, MONGODB_DB"
-      );
-    }
-    uri = `mongodb+srv://${encodeURIComponent(MONGODB_USER)}:${encodeURIComponent(
-      MONGODB_PASSWORD
-    )}@${MONGODB_URL}/${MONGODB_DB}?retryWrites=true&w=majority`;
-  }
-
-  await mongoose.connect(uri, options);
+  await mongoose.connect(uri);
   console.log("Mongo connection successfully established!");
 }
