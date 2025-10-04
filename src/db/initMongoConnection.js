@@ -1,12 +1,20 @@
 import mongoose from "mongoose";
 
 export async function initMongoConnection() {
-  const uri = (process.env.MONGODB_URI || "").trim();
-  if (!uri) throw new Error("MONGODB_URI is not set");
+  const { MONGODB_USER, MONGODB_PASSWORD, MONGODB_URL, MONGODB_DB } =
+    process.env;
 
-  // Тимчасові діагностичні логи (без пароля)
-  console.log("URI prefix:", uri.slice(0, 14)); // очікуємо "mongodb+srv://"
+  if (!MONGODB_USER || !MONGODB_PASSWORD || !MONGODB_URL || !MONGODB_DB) {
+    throw new Error(
+      "Missing Mongo env vars. Required: MONGODB_USER, MONGODB_PASSWORD, MONGODB_URL, MONGODB_DB"
+    );
+  }
+
+  const uri = `mongodb+srv://${encodeURIComponent(MONGODB_USER)}:${encodeURIComponent(
+    MONGODB_PASSWORD
+  )}@${MONGODB_URL}/${MONGODB_DB}?retryWrites=true&w=majority`;
 
   await mongoose.connect(uri);
+  // eslint-disable-next-line no-console
   console.log("Mongo connection successfully established!");
 }
