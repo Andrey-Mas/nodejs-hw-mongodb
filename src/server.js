@@ -2,42 +2,33 @@ import express from "express";
 import cors from "cors";
 import pino from "pino";
 import pinoHttp from "pino-http";
-import {
-  getContactsController,
-  getContactByIdController,
-} from "./controllers/contacts.js";
+
+import contactsRouter from "./routers/contacts.js";
+import { notFoundHandler } from "./middlewares/notFoundHandler.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
 
 export function setupServer() {
   const app = express();
 
-  // базові мідлвари
+  const logger = pino({ level: process.env.LOG_LEVEL || "info" });
+
   app.use(cors());
   app.use(express.json());
+  app.use(
+    pinoHttp({
+      logger,
+      autoLogging: true,
+    })
+  );
 
-  // pino-логер
-  const logger = pino({
-    level: process.env.NODE_ENV === "production" ? "info" : "debug",
-  });
-  app.use(pinoHttp({ logger, autoLogging: true }));
+  // Routes
+  app.use("/contacts", contactsRouter);
 
-  // роутинг
-  app.get("/contacts", getContactsController);
-  app.get("/contacts/:contactId", getContactByIdController);
+  // 404 handler for unknown routes
+  app.use(notFoundHandler);
 
-  // 404 для неіснуючих маршрутів
-  app.use((req, res) => {
-    res.status(404).json({ message: "Not found" });
-  });
-
-  // глобальний обробник помилок (НА САМОМУ КІНЦІ)
-  app.use((err, req, res, next) => {
-    req.log?.error(err);
-    // невалідний ObjectId → як "не знайдено"
-    if (err?.name === "CastError") {
-      return res.status(404).json({ message: "Contact not found" });
-    }
-    return res.status(500).json({ message: "Internal Server Error" });
-  });
+  // Centralized error handler
+  app.use(errorHandler);
 
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {

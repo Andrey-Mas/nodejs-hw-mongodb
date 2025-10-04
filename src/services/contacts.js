@@ -6,9 +6,26 @@ export async function getAllContactsService() {
 }
 
 export async function getContactByIdService(contactId) {
-  // якщо id не валідний — повертаємо null, щоб контролер віддав 404
-  if (!mongoose.isValidObjectId(contactId)) {
-    return null;
-  }
+  if (!mongoose.isValidObjectId(contactId)) return null;
   return Contact.findById(contactId);
+}
+
+export async function createContactService(payload) {
+  const created = await Contact.create(payload);
+  return created;
+}
+
+export async function updateContactByIdService(contactId, payload) {
+  if (!mongoose.isValidObjectId(contactId)) return null;
+  const updated = await Contact.findByIdAndUpdate(contactId, payload, {
+    new: true,
+    runValidators: true,
+  });
+  return updated;
+}
+
+export async function deleteContactByIdService(contactId) {
+  if (!mongoose.isValidObjectId(contactId)) return null;
+  const deleted = await Contact.findByIdAndDelete(contactId);
+  return deleted;
 }
