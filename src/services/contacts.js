@@ -10,7 +10,7 @@ export async function getAllContactsService(options = {}) {
     filters = {},
   } = options;
 
-  const query = {};
+  const query = { ...(filters.userId ? { userId: filters.userId } : {}) };
 
   if (typeof filters.isFavourite === "boolean") {
     query.isFavourite = filters.isFavourite;
@@ -43,9 +43,9 @@ export async function getAllContactsService(options = {}) {
   };
 }
 
-export async function getContactByIdService(contactId) {
+export async function getContactByIdService(contactId, filters = {}) {
   if (!mongoose.isValidObjectId(contactId)) return null;
-  return Contact.findById(contactId);
+  return Contact.findOne({ _id: contactId, userId: filters?.userId || undefined });
 }
 
 export async function createContactService(payload) {
@@ -55,15 +55,15 @@ export async function createContactService(payload) {
 
 export async function updateContactByIdService(contactId, payload) {
   if (!mongoose.isValidObjectId(contactId)) return null;
-  const updated = await Contact.findByIdAndUpdate(contactId, payload, {
+  const updated = await Contact.findOneAndUpdate({ _id: contactId, userId: payload.userId }, payload, {
     new: true,
     runValidators: true,
   });
   return updated;
 }
 
-export async function deleteContactByIdService(contactId) {
+export async function deleteContactByIdService(contactId, filters = {}) {
   if (!mongoose.isValidObjectId(contactId)) return null;
-  const deleted = await Contact.findByIdAndDelete(contactId);
+  const deleted = await Contact.findOneAndDelete({ _id: contactId, userId: filters?.userId || undefined });
   return deleted;
 }

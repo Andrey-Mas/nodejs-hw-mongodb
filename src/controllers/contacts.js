@@ -29,6 +29,7 @@ export async function getContactsController(req, res) {
   if (type) filters.contactType = type;
 
   const data = await getAllContactsService({
+    filters: { ...filters, userId: req.user._id },
     page: numericPage,
     perPage: numericPerPage,
     sortBy,
@@ -46,21 +47,21 @@ export async function getContactsController(req, res) {
 // GET /contacts/:contactId
 export async function getContactByIdController(req, res) {
   const { contactId } = req.params;
-  const data = await getContactByIdService(contactId);
+  const data = await getContactByIdService(contactId, { userId: req.user._id });
   if (!data) throw createError(404, "Contact not found");
   res.json({ status: 200, message: "Successfully found contact!", data });
 }
 
 // POST /contacts
 export async function createContactController(req, res) {
-  const data = await createContactService(req.body);
+  const data = await createContactService({ ...req.body, userId: req.user._id });
   res.status(201).json({ status: 201, message: "Successfully created contact!", data });
 }
 
 // PATCH /contacts/:contactId
 export async function patchContactByIdController(req, res) {
   const { contactId } = req.params;
-  const data = await updateContactByIdService(contactId, req.body);
+  const data = await updateContactByIdService(contactId, { ...req.body, userId: req.user._id });
   if (!data) throw createError(404, "Contact not found");
   res.json({ status: 200, message: "Successfully patched contact!", data });
 }
@@ -68,7 +69,7 @@ export async function patchContactByIdController(req, res) {
 // DELETE /contacts/:contactId
 export async function deleteContactByIdController(req, res) {
   const { contactId } = req.params;
-  const data = await deleteContactByIdService(contactId);
+  const data = await deleteContactByIdService(contactId, { userId: req.user._id });
   if (!data) throw createError(404, "Contact not found");
   res.status(204).send();
 }
