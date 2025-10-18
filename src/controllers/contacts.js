@@ -1,4 +1,6 @@
 import createError from "http-errors";
+import { uploadImage } from "../services/uploads.js";
+
 import {
   getAllContactsService,
   getContactByIdService,
@@ -54,12 +56,18 @@ export async function getContactByIdController(req, res) {
 
 // POST /contacts
 export async function createContactController(req, res) {
+  if (req.file) {
+    try { const url = await uploadImage(req.file.path); req.body.photo = url; } catch(e) {}
+  }
   const data = await createContactService({ ...req.body, userId: req.user._id });
   res.status(201).json({ status: 201, message: "Successfully created contact!", data });
 }
 
 // PATCH /contacts/:contactId
 export async function patchContactByIdController(req, res) {
+  if (req.file) {
+    try { const url = await uploadImage(req.file.path); req.body.photo = url; } catch(e) {}
+  }
   const { contactId } = req.params;
   const data = await updateContactByIdService(contactId, { ...req.body, userId: req.user._id });
   if (!data) throw createError(404, "Contact not found");
