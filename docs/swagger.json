@@ -11,10 +11,13 @@
   },
   "servers": [
     {
+      "url": "/"
+    },
+    {
       "url": "http://localhost:3000"
     },
     {
-      "url": "https://<your-render-app>.onrender.com"
+      "url": "https://hw7-swagger-nc36.onrender.com"
     }
   ],
   "tags": [
