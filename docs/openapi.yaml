@@ -1,0 +1,35 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: NodeJS Contacts API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: |
+    REST API for managing contacts with authentication, image uploads, and email features.
+tags:
+  - name: Contacts
+    description: Operations about contacts
+servers:
+  - url: http://localhost:3000
+  - url: https://<your-render-app>.onrender.com
+paths:
+  /contacts:
+    get:
+      $ref: ../swagger/paths/contacts.get.yaml#/get
+    post:
+      $ref: ../swagger/paths/contacts.post.yaml#/post
+  /contacts/{contactId}:
+    get:
+      $ref: ../swagger/paths/contacts.{contactId}.get.yaml#/get
+    patch:
+      $ref: ../swagger/paths/contacts.{contactId}.patch.yaml#/patch
+    delete:
+      $ref: ../swagger/paths/contacts.{contactId}.delete.yaml#/delete
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

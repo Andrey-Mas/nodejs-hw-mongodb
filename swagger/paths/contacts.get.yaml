@@ -1,0 +1,37 @@
+get:
+  tags: [Contacts]
+  summary: Get paginated list of contacts
+  operationId: getContacts
+  description: Returns user's contacts with optional filters.
+  security: [{ bearerAuth: [] }]
+  parameters:
+    - in: query
+      name: page
+      schema: { type: integer, minimum: 1, default: 1 }
+    - in: query
+      name: perPage
+      schema: { type: integer, minimum: 1, maximum: 100, default: 10 }
+    - in: query
+      name: isFavourite
+      schema: { type: boolean }
+    - in: query
+      name: contactType
+      schema:
+        type: string
+        enum: [work, home, personal]
+  responses:
+    "200":
+      description: A paginated list of contacts
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "../../swagger/components/schemas.contact.yaml#/Contact"
+              meta:
+                $ref: "../../swagger/components/schemas.pagination.yaml#/PaginationMeta"
+    "401":
+      description: Unauthorized
