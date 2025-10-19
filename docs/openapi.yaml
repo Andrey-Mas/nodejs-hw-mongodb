@@ -11,6 +11,7 @@ tags:
   - name: Contacts
     description: Operations about contacts
 servers:
+  - url: /
   - url: http://localhost:3000
   - url: https://hw7-swagger-nc36.onrender.com
 paths:
