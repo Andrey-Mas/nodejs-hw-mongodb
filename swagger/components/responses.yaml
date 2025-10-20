@@ -1,0 +1,31 @@
+StandardSuccessWithData:
+  type: object
+  properties:
+    status:
+      type: string
+      example: success
+    message:
+      type: string
+      example: Operation completed successfully
+    data:
+      type: object
+
+StandardError:
+  type: object
+  properties:
+    status:
+      type: string
+      example: error
+    message:
+      type: string
+      example: Something went wrong
+
+NotFound:
+  type: object
+  properties:
+    status:
+      type: string
+      example: error
+    message:
+      type: string
+      example: Contact not found

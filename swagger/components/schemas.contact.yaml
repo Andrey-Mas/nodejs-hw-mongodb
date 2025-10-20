@@ -1,13 +1,34 @@
 Contact:
   type: object
   properties:
-    _id: { type: string, example: "671a7f0d8c3c2e0012a4b123" }
-    userId: { type: string, example: "671a7e9e8c3c2e0012a4b0ff" }
-    name: { type: string, example: "John Doe" }
-    phoneNumber: { type: string, example: "+38 050 123 45 67" }
-    email: { type: string, example: "john@example.com" }
-    photo: { type: string, example: "https://res.cloudinary.com/demo/image/upload/v123/photo.jpg" }
-    isFavourite: { type: boolean, example: false }
-    contactType: { type: string, enum: [work, home, personal], example: personal }
-    createdAt: { type: string, format: date-time }
-    updatedAt: { type: string, format: date-time }
+    _id:
+      type: string
+      example: "671a7f0d8c3c2e0012a4b123"
+    userId:
+      type: string
+      example: "671a7e9e8c3c2e0012a4b0ff"
+    name:
+      type: string
+      example: "John Doe"
+    phoneNumber:
+      type: string
+      example: "+38 050 123 45 67"
+    email:
+      type: string
+      example: "john@example.com"
+    photo:
+      type: string
+      example: "https://res.cloudinary.com/demo/image/upload/v123/photo.jpg"
+    isFavourite:
+      type: boolean
+      example: false
+    contactType:
+      type: string
+      enum: [work, home, personal]
+      example: personal
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time

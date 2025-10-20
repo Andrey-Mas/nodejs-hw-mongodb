@@ -2,11 +2,25 @@ CreateContactInput:
   type: object
   required: [name, phoneNumber, contactType]
   properties:
-    name: { type: string, example: "Alice" }
-    phoneNumber: { type: string, example: "+1 202 555 0147" }
-    email: { type: string, example: "alice@example.com" }
-    isFavourite: { type: boolean, example: false }
-    contactType: { type: string, enum: [work, home, personal], example: personal }
+    name:
+      type: string
+      example: "Alice"
+    phoneNumber:
+      type: string
+      example: "+1 202 555 0147"
+    email:
+      type: string
+      example: "alice@example.com"
+    isFavourite:
+      type: boolean
+      example: false
+    contactType:
+      type: string
+      enum: [work, home, personal]
+      example: personal
+    photo:
+      type: string
+      format: binary
 
 UpdateContactInput:
   type: object
@@ -15,4 +29,9 @@ UpdateContactInput:
     phoneNumber: { type: string }
     email: { type: string }
     isFavourite: { type: boolean }
-    contactType: { type: string, enum: [work, home, personal] }
+    contactType:
+      type: string
+      enum: [work, home, personal]
+    photo:
+      type: string
+      format: binary

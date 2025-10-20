@@ -2,12 +2,13 @@ post:
   tags: [Contacts]
   summary: Create a contact
   operationId: createContact
-  description: Creates a contact for current user.
-  security: [{ bearerAuth: [] }]
+  description: Creates a contact for current user. Supports optional photo upload.
+  security:
+    - bearerAuth: []
   requestBody:
     required: true
     content:
-      application/json:
+      multipart/form-data:
         schema:
           $ref: "../../swagger/components/schemas.requests.yaml#/CreateContactInput"
   responses:
@@ -18,7 +19,23 @@ post:
           schema:
             type: object
             properties:
+              status:
+                type: string
+                example: success
+              message:
+                type: string
+                example: Contact created successfully
               data:
                 $ref: "../../swagger/components/schemas.contact.yaml#/Contact"
     "400":
       description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: "../../swagger/components/responses.yaml#/StandardError"
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../../swagger/components/responses.yaml#/StandardError"

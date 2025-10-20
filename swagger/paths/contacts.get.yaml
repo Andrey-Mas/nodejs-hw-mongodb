@@ -2,36 +2,105 @@ get:
   tags: [Contacts]
   summary: Get paginated list of contacts
   operationId: getContacts
-  description: Returns user's contacts with optional filters.
-  security: [{ bearerAuth: [] }]
+  description: Returns user's contacts with pagination and optional filters.
+  security:
+    - bearerAuth: []
   parameters:
-    - in: query
-      name: page
-      schema: { type: integer, minimum: 1, default: 1 }
-    - in: query
-      name: perPage
-      schema: { type: integer, minimum: 1, maximum: 100, default: 10 }
-    - in: query
-      name: isFavourite
-      schema: { type: boolean }
-    - in: query
-      name: contactType
+    - name: page
+      in: query
+      description: Page number (starts from 1)
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        example: 1
+    - name: perPage
+      in: query
+      description: Number of items per page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        example: 10
+    - name: isFavourite
+      in: query
+      description: Filter by favourite contacts
+      required: false
+      schema:
+        type: boolean
+        example: true
+    - name: type
+      in: query
+      description: Filter by contact type (as used by your code)
+      required: false
       schema:
         type: string
         enum: [work, home, personal]
+        example: personal
+    - name: sortBy
+      in: query
+      description: Field to sort by
+      required: false
+      schema:
+        type: string
+        example: name
+    - name: sortOrder
+      in: query
+      description: Sort order
+      required: false
+      schema:
+        type: string
+        enum: [asc, desc]
+        example: asc
   responses:
     "200":
-      description: A paginated list of contacts
+      description: A paginated list of contacts (wrapped)
       content:
         application/json:
           schema:
             type: object
             properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: Successfully found contacts!
               data:
-                type: array
-                items:
-                  $ref: "../../swagger/components/schemas.contact.yaml#/Contact"
-              meta:
-                $ref: "../../swagger/components/schemas.pagination.yaml#/PaginationMeta"
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "../../swagger/components/schemas.contact.yaml#/Contact"
+                  page:
+                    type: integer
+                    example: 1
+                  perPage:
+                    type: integer
+                    example: 10
+                  totalItems:
+                    type: integer
+                    example: 42
+                  totalPages:
+                    type: integer
+                    example: 5
+                  hasPreviousPage:
+                    type: boolean
+                    example: false
+                  hasNextPage:
+                    type: boolean
+                    example: true
     "401":
       description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../../swagger/components/responses.yaml#/StandardError"
+    "500":
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: "../../swagger/components/responses.yaml#/StandardError"
