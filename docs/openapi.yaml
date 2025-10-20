@@ -1,25 +1,34 @@
 openapi: 3.1.0
 info:
-  version: 1.0.0
   title: NodeJS Contacts API
+  version: 1.0.0
+  description: |
+    REST API for managing contacts with authentication, image uploads and email features.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: |
-    REST API for managing contacts with authentication, image uploads, and email features.
+
 tags:
   - name: Contacts
-    description: Operations about contacts
+    description: Operations for managing contacts
+  - name: Auth
+    description: Authentication (register/login) — optional
+
 servers:
   - url: /
+    description: Use current host (works both locally and on Render)
   - url: http://localhost:3000
+    description: Local development
   - url: https://hw7-swagger-nc36.onrender.com
+    description: Production (Render)
+
 paths:
   /contacts:
     get:
       $ref: ../swagger/paths/contacts.get.yaml#/get
     post:
       $ref: ../swagger/paths/contacts.post.yaml#/post
+
   /contacts/{contactId}:
     get:
       $ref: ../swagger/paths/contacts.{contactId}.get.yaml#/get
@@ -34,3 +43,6 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+
+  # Note: schemas and shared responses are stored in separate files under ../swagger/components/
+  # and are referenced from the paths YAMLs. Keep them there (do not duplicate here).
